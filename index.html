@@ -6,11 +6,7 @@
   <title>情侣双人心情记录</title>
   <style>
     /* ========== 全局样式 ========== */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
@@ -20,10 +16,12 @@
       line-height: 1.6;
     }
 
+    .hidden { display: none !important; }
+
     /* 页头 */
     .header {
       text-align: center;
-      padding: 24px 16px 12px;
+      padding: 20px 16px 12px;
       background: rgba(255, 255, 255, 0.85);
       border-bottom: 1px solid #e2e8f0;
       backdrop-filter: blur(8px);
@@ -32,16 +30,20 @@
       z-index: 100;
     }
 
-    .header h1 {
-      font-size: 1.5rem;
-      color: #1e293b;
-      margin-bottom: 6px;
+    .header h1 { font-size: 1.5rem; color: #1e293b; margin-bottom: 6px; }
+
+    .page-indicator {
+      display: inline-block;
+      padding: 6px 16px;
+      background: #1e293b;
+      color: #fff;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 8px;
     }
 
-    .header .cycle-info {
-      font-size: 0.875rem;
-      color: #64748b;
-    }
+    .header .cycle-info { font-size: 0.875rem; color: #64748b; }
 
     .header .today-badge {
       display: inline-block;
@@ -54,23 +56,134 @@
       font-weight: 600;
     }
 
-    /* 双栏主布局 */
-    .main-container {
+    /* ========== 第1页：密码验证页 ========== */
+    .auth-page {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 24px 16px 40px;
+    }
+
+    .auth-intro {
+      text-align: center;
+      color: #64748b;
+      font-size: 0.9rem;
+      margin-bottom: 24px;
+    }
+
+    .auth-unlock-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 20px;
-      max-width: 1400px;
+      margin-bottom: 32px;
+    }
+
+    @media (max-width: 640px) {
+      .auth-unlock-grid { grid-template-columns: 1fr; }
+    }
+
+    .auth-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    }
+
+    .auth-card.male { border-top: 4px solid #3b82f6; }
+    .auth-card.female { border-top: 4px solid #ec4899; }
+
+    .auth-card h3 {
+      font-size: 1.1rem;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .auth-card.male h3 { color: #1d4ed8; }
+    .auth-card.female h3 { color: #be185d; }
+
+    .pwd-field {
+      margin-bottom: 12px;
+    }
+
+    .pwd-field label {
+      display: block;
+      font-size: 0.8rem;
+      color: #64748b;
+      margin-bottom: 4px;
+    }
+
+    .pwd-input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-family: inherit;
+    }
+
+    .pwd-input:focus {
+      outline: none;
+      border-color: #94a3b8;
+    }
+
+    .auth-error {
+      color: #dc2626;
+      font-size: 0.8rem;
+      margin-top: 8px;
+      min-height: 1.2em;
+    }
+
+    .auth-card .btn { width: 100%; margin-top: 4px; }
+
+    /* 密码管理区 */
+    .auth-manage {
+      background: #fff;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    }
+
+    .auth-manage > h3 {
+      font-size: 1rem;
+      color: #475569;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f1f5f9;
+    }
+
+    .auth-manage-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 640px) {
+      .auth-manage-grid { grid-template-columns: 1fr; }
+    }
+
+    .manage-block h4 {
+      font-size: 0.9rem;
+      margin-bottom: 12px;
+      color: #334155;
+    }
+
+    .manage-block.male h4 { color: #1d4ed8; }
+    .manage-block.female h4 { color: #be185d; }
+
+    .manage-hint {
+      font-size: 0.75rem;
+      color: #94a3b8;
+      margin-bottom: 10px;
+    }
+
+    /* ========== 主内容区（第2/3页） ========== */
+    .main-container {
+      max-width: 800px;
       margin: 0 auto;
       padding: 20px 16px 40px;
     }
 
-    @media (max-width: 900px) {
-      .main-container {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    /* 个人板块 */
     .panel {
       background: #fff;
       border-radius: 16px;
@@ -78,13 +191,8 @@
       overflow: hidden;
     }
 
-    .panel.male {
-      border-top: 4px solid #3b82f6;
-    }
-
-    .panel.female {
-      border-top: 4px solid #ec4899;
-    }
+    .panel.male { border-top: 4px solid #3b82f6; }
+    .panel.female { border-top: 4px solid #ec4899; }
 
     .panel-header {
       padding: 16px 20px;
@@ -92,22 +200,27 @@
       font-weight: 700;
       display: flex;
       align-items: center;
+      justify-content: space-between;
       gap: 8px;
     }
 
-    .panel.male .panel-header {
-      background: #eff6ff;
-      color: #1d4ed8;
+    .panel.male .panel-header { background: #eff6ff; color: #1d4ed8; }
+    .panel.female .panel-header { background: #fdf2f8; color: #be185d; }
+
+    .btn-lock {
+      padding: 6px 12px;
+      border: 2px solid #cbd5e1;
+      border-radius: 8px;
+      background: #fff;
+      font-size: 0.75rem;
+      cursor: pointer;
+      color: #64748b;
+      font-weight: 600;
     }
 
-    .panel.female .panel-header {
-      background: #fdf2f8;
-      color: #be185d;
-    }
+    .btn-lock:hover { background: #f8fafc; }
 
-    .panel-body {
-      padding: 20px;
-    }
+    .panel-body { padding: 20px; }
 
     .section-title {
       font-size: 1rem;
@@ -118,18 +231,9 @@
       border-bottom: 2px solid #f1f5f9;
     }
 
-    /* 今日记录区 */
-    .today-section {
-      margin-bottom: 28px;
-    }
+    .today-section { margin-bottom: 28px; }
+    .today-date { font-size: 0.85rem; color: #94a3b8; margin-bottom: 12px; }
 
-    .today-date {
-      font-size: 0.85rem;
-      color: #94a3b8;
-      margin-bottom: 12px;
-    }
-
-    /* 心情选择 */
     .mood-group {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -138,21 +242,11 @@
     }
 
     @media (max-width: 500px) {
-      .mood-group {
-        grid-template-columns: repeat(2, 1fr);
-      }
+      .mood-group { grid-template-columns: repeat(2, 1fr); }
     }
 
-    .mood-option {
-      position: relative;
-    }
-
-    .mood-option input {
-      position: absolute;
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
+    .mood-option { position: relative; }
+    .mood-option input { position: absolute; opacity: 0; width: 0; height: 0; }
 
     .mood-option label {
       display: block;
@@ -170,9 +264,9 @@
       border-color: currentColor;
       font-weight: 600;
       transform: scale(1.02);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
     }
 
-    /* 六种心情对应颜色 */
     .mood-极度开心 label { color: #ca8a04; background: #fef9c3; }
     .mood-轻微开心 label { color: #16a34a; background: #dcfce7; }
     .mood-平淡普通 label { color: #64748b; background: #f1f5f9; }
@@ -180,11 +274,6 @@
     .mood-极度难过 label { color: #1e40af; background: #bfdbfe; }
     .mood-生气烦躁 label { color: #dc2626; background: #fee2e2; }
 
-    .mood-option input:checked + label {
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
-    }
-
-    /* 日记输入 */
     .diary-input {
       width: 100%;
       min-height: 100px;
@@ -195,15 +284,10 @@
       font-size: 0.9rem;
       resize: vertical;
       margin-bottom: 12px;
-      transition: border-color 0.2s;
     }
 
-    .diary-input:focus {
-      outline: none;
-      border-color: #94a3b8;
-    }
+    .diary-input:focus { outline: none; border-color: #94a3b8; }
 
-    /* 按钮 */
     .btn {
       padding: 10px 18px;
       border: none;
@@ -214,45 +298,16 @@
       transition: all 0.2s;
     }
 
-    .btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-primary { background: #3b82f6; color: #fff; }
+    .panel.female .btn-primary { background: #ec4899; }
+    .btn-primary:hover:not(:disabled) { filter: brightness(1.08); }
+    .btn-outline { background: transparent; border: 2px solid #cbd5e1; color: #475569; }
+    .btn-outline:hover:not(:disabled) { background: #f8fafc; }
+    .btn-success { background: #22c55e; color: #fff; }
+    .btn-danger { background: #ef4444; color: #fff; }
+    .btn-sm { padding: 8px 14px; font-size: 0.8rem; }
 
-    .btn-primary {
-      background: #3b82f6;
-      color: #fff;
-    }
-
-    .panel.female .btn-primary {
-      background: #ec4899;
-    }
-
-    .btn-primary:hover:not(:disabled) {
-      filter: brightness(1.08);
-    }
-
-    .btn-outline {
-      background: transparent;
-      border: 2px solid #cbd5e1;
-      color: #475569;
-    }
-
-    .btn-outline:hover:not(:disabled) {
-      background: #f8fafc;
-    }
-
-    .btn-success {
-      background: #22c55e;
-      color: #fff;
-    }
-
-    .btn-danger {
-      background: #ef4444;
-      color: #fff;
-    }
-
-    /* 申请查看区域 */
     .unlock-section {
       margin-top: 20px;
       padding: 16px;
@@ -261,17 +316,8 @@
       border: 1px dashed #cbd5e1;
     }
 
-    .unlock-section h4 {
-      font-size: 0.9rem;
-      color: #64748b;
-      margin-bottom: 10px;
-    }
-
-    .unlock-status {
-      font-size: 0.85rem;
-      color: #64748b;
-      margin-top: 8px;
-    }
+    .unlock-section h4 { font-size: 0.9rem; color: #64748b; margin-bottom: 10px; }
+    .unlock-status { font-size: 0.85rem; color: #64748b; margin-top: 8px; }
 
     .partner-diary-box {
       margin-top: 12px;
@@ -282,24 +328,10 @@
       display: none;
     }
 
-    .partner-diary-box.visible {
-      display: block;
-    }
+    .partner-diary-box.visible { display: block; }
+    .partner-diary-box .label { font-size: 0.75rem; color: #f59e0b; font-weight: 600; margin-bottom: 6px; }
+    .partner-diary-box .content { font-size: 0.9rem; color: #334155; white-space: pre-wrap; }
 
-    .partner-diary-box .label {
-      font-size: 0.75rem;
-      color: #f59e0b;
-      font-weight: 600;
-      margin-bottom: 6px;
-    }
-
-    .partner-diary-box .content {
-      font-size: 0.9rem;
-      color: #334155;
-      white-space: pre-wrap;
-    }
-
-    /* 收到申请时的弹窗提示（仅出现在被申请方板块内） */
     .request-popup {
       margin-top: 16px;
       padding: 18px;
@@ -307,31 +339,13 @@
       border: 2px solid #f59e0b;
       border-radius: 12px;
       box-shadow: 0 8px 24px rgba(245, 158, 11, 0.2);
-      animation: modalIn 0.25s ease;
     }
 
-    .request-popup h4 {
-      font-size: 0.95rem;
-      color: #92400e;
-      margin-bottom: 8px;
-    }
+    .request-popup h4 { font-size: 0.95rem; color: #92400e; margin-bottom: 8px; }
+    .request-popup p { font-size: 0.85rem; color: #b45309; margin-bottom: 14px; }
+    .request-popup .modal-actions { display: flex; gap: 10px; }
 
-    .request-popup p {
-      font-size: 0.85rem;
-      color: #b45309;
-      margin-bottom: 14px;
-    }
-
-    .request-popup .modal-actions {
-      display: flex;
-      gap: 10px;
-    }
-
-    /* 365天日历列表 */
-    .calendar-section {
-      max-height: 480px;
-      overflow-y: auto;
-    }
+    .calendar-section { max-height: 480px; overflow-y: auto; }
 
     .day-item {
       display: grid;
@@ -343,23 +357,10 @@
       font-size: 0.85rem;
     }
 
-    .day-item:hover {
-      background: #fafafa;
-    }
-
-    .day-item .day-num {
-      font-weight: 700;
-      color: #94a3b8;
-    }
-
-    .day-item .day-num.today {
-      color: #f59e0b;
-    }
-
-    .day-item .day-date {
-      font-size: 0.75rem;
-      color: #cbd5e1;
-    }
+    .day-item:hover { background: #fafafa; }
+    .day-item .day-num { font-weight: 700; color: #94a3b8; }
+    .day-item .day-num.today { color: #f59e0b; }
+    .day-item .day-date { font-size: 0.75rem; color: #cbd5e1; }
 
     .record-self {
       padding: 8px 10px;
@@ -368,11 +369,7 @@
       min-height: 48px;
     }
 
-    .record-self.empty {
-      background: #f8fafc;
-      color: #cbd5e1;
-      font-style: italic;
-    }
+    .record-self.empty { background: #f8fafc; color: #cbd5e1; font-style: italic; }
 
     .record-self .mood-tag {
       display: inline-block;
@@ -395,10 +392,6 @@
       gap: 6px;
     }
 
-    .record-partner .lock-icon {
-      font-size: 1.1rem;
-    }
-
     .list-header {
       display: grid;
       grid-template-columns: 72px 1fr 1fr;
@@ -412,12 +405,6 @@
       top: 0;
     }
 
-    @keyframes modalIn {
-      from { opacity: 0; transform: scale(0.95) translateY(-10px); }
-      to { opacity: 1; transform: scale(1) translateY(0); }
-    }
-
-    /* 提示消息 */
     .toast {
       position: fixed;
       bottom: 24px;
@@ -434,19 +421,9 @@
       pointer-events: none;
     }
 
-    .toast.show {
-      transform: translateX(-50%) translateY(0);
-      opacity: 1;
-    }
+    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+    .cycle-ended { text-align: center; padding: 40px 20px; color: #94a3b8; }
 
-    /* 周期结束提示 */
-    .cycle-ended {
-      text-align: center;
-      padding: 40px 20px;
-      color: #94a3b8;
-    }
-
-    /* 心情标签颜色（列表用） */
     .tag-极度开心 { background: #fef9c3; color: #ca8a04; }
     .tag-轻微开心 { background: #dcfce7; color: #16a34a; }
     .tag-平淡普通 { background: #f1f5f9; color: #64748b; }
@@ -457,67 +434,332 @@
 </head>
 <body>
 
-  <!-- 页头：显示周期信息与今日进度 -->
   <header class="header">
+    <div class="page-indicator" id="pageIndicator">第 1 页 · 密码验证页</div>
     <h1>💑 情侣双人心情记录</h1>
     <p class="cycle-info" id="cycleInfo">记录周期：365天</p>
-    <span class="today-badge" id="todayBadge"></span>
+    <span class="today-badge hidden" id="todayBadge"></span>
   </header>
 
-  <!-- 双栏主内容 -->
-  <main class="main-container">
-    <!-- 男生板块 -->
-    <section class="panel male" id="malePanel">
-      <div class="panel-header">👦 男生</div>
+  <!-- 第1页：密码验证页（启动默认显示，男女界面全部锁定） -->
+  <div class="auth-page" id="authPage">
+    <p class="auth-intro">🔐 请输入专属密码解锁对应界面，两组密码独立不互通</p>
+
+    <div class="auth-unlock-grid">
+      <!-- 男生解锁 -->
+      <div class="auth-card male">
+        <h3>👦 男生专属解锁</h3>
+        <div class="pwd-field">
+          <label for="unlock-male-pwd">男生密码</label>
+          <input type="password" class="pwd-input" id="unlock-male-pwd" placeholder="输入男生专属密码" autocomplete="off">
+        </div>
+        <button class="btn btn-primary" id="unlock-male-btn">解锁男生界面</button>
+        <p class="auth-error" id="unlock-male-error"></p>
+      </div>
+
+      <!-- 女生解锁 -->
+      <div class="auth-card female">
+        <h3>👧 女生专属解锁</h3>
+        <div class="pwd-field">
+          <label for="unlock-female-pwd">女生密码</label>
+          <input type="password" class="pwd-input" id="unlock-female-pwd" placeholder="输入女生专属密码" autocomplete="off">
+        </div>
+        <button class="btn btn-primary" id="unlock-female-btn">解锁女生界面</button>
+        <p class="auth-error" id="unlock-female-error"></p>
+      </div>
+    </div>
+
+    <!-- 密码设置 / 修改 -->
+    <div class="auth-manage">
+      <h3>⚙️ 密码设置与修改</h3>
+      <div class="auth-manage-grid">
+        <!-- 男生密码管理 -->
+        <div class="manage-block male" id="manage-male"></div>
+        <!-- 女生密码管理 -->
+        <div class="manage-block female" id="manage-female"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 第2/3页：解锁后的专属界面（默认隐藏） -->
+  <main class="main-container hidden" id="appMain">
+    <section class="panel male hidden" id="malePanel">
+      <div class="panel-header">
+        <span>👦 男生</span>
+        <button class="btn-lock" id="lockBtn">🔒 锁定退出</button>
+      </div>
       <div class="panel-body" id="maleBody"></div>
     </section>
 
-    <!-- 女生板块 -->
-    <section class="panel female" id="femalePanel">
-      <div class="panel-header">👧 女生</div>
+    <section class="panel female hidden" id="femalePanel">
+      <div class="panel-header">
+        <span>👧 女生</span>
+        <button class="btn-lock" id="lockBtnFemale">🔒 锁定退出</button>
+      </div>
       <div class="panel-body" id="femaleBody"></div>
     </section>
   </main>
 
-  <!-- 操作提示 -->
   <div class="toast" id="toast"></div>
 
   <script>
     /* ============================================================
-     * 情侣双人心情记录 - 核心逻辑
-     * 数据存储：LocalStorage
-     * 记录周期：固定365天，每人每天仅一条记录
+     * 情侣双人心情记录
+     * 页面分层：第1页密码验证 → 第2页男生界面 / 第3页女生界面
+     * 解锁状态仅存于内存，刷新/重启后回到密码页
      * ============================================================ */
 
-  // ---------- 常量配置 ----------
-  const STORAGE_KEY = 'coupleMoodDiary_v1'; // LocalStorage 键名
-  const CYCLE_DAYS = 365;                    // 固定记录周期天数
-  const MOODS = [                            // 六种固定心情
-    '极度开心',
-    '轻微开心',
-    '平淡普通',
-    '轻微不开心',
-    '极度难过',
-    '生气烦躁'
-  ];
+  const STORAGE_KEY = 'coupleMoodDiary_v1';
+  const CYCLE_DAYS = 365;
+  const MOODS = ['极度开心', '轻微开心', '平淡普通', '轻微不开心', '极度难过', '生气烦躁'];
   const ROLES = {
     male: { label: '男生', partner: 'female', partnerLabel: '女生' },
     female: { label: '女生', partner: 'male', partnerLabel: '男生' }
   };
+  const PAGE_META = {
+    auth: { num: 1, title: '密码验证页' },
+    male: { num: 2, title: '男生界面' },
+    female: { num: 3, title: '女生界面' }
+  };
+
+  // 当前页面与解锁身份（仅内存，刷新后重置为 auth）
+  let currentPage = 'auth';
+  let unlockedRole = null;
+
+  // ---------- 密码工具 ----------
+
+  /** 密码哈希（本地存储用） */
+  function hashPassword(pwd) {
+    let h = 5381;
+    for (let i = 0; i < pwd.length; i++) {
+      h = ((h << 5) + h) ^ pwd.charCodeAt(i);
+    }
+    return 'h' + (h >>> 0).toString(36);
+  }
+
+  function hasPassword(role) {
+    const data = loadData();
+    return !!(data.passwords && data.passwords[role]);
+  }
+
+  function verifyPassword(role, pwd) {
+    const data = loadData();
+    if (!data.passwords || !data.passwords[role]) return false;
+    return data.passwords[role] === hashPassword(pwd);
+  }
+
+  /** 首次设置密码 */
+  function setPassword(role, newPwd) {
+    if (!newPwd || newPwd.length < 4) {
+      return { ok: false, msg: '密码至少4位' };
+    }
+    const data = loadData();
+    if (!data.passwords) data.passwords = { male: null, female: null };
+    if (data.passwords[role]) {
+      return { ok: false, msg: '密码已存在，请使用修改功能' };
+    }
+    data.passwords[role] = hashPassword(newPwd);
+    saveData(data);
+    return { ok: true, msg: `${ROLES[role].label}密码设置成功` };
+  }
+
+  /** 修改密码（需核验原密码） */
+  function changePassword(role, oldPwd, newPwd) {
+    if (!hasPassword(role)) {
+      return { ok: false, msg: '尚未设置密码，请先设置' };
+    }
+    if (!verifyPassword(role, oldPwd)) {
+      return { ok: false, msg: '原密码错误' };
+    }
+    if (!newPwd || newPwd.length < 4) {
+      return { ok: false, msg: '新密码至少4位' };
+    }
+    const data = loadData();
+    data.passwords[role] = hashPassword(newPwd);
+    saveData(data);
+    return { ok: true, msg: `${ROLES[role].label}密码修改成功` };
+  }
+
+  /** 尝试解锁：校验密码并跳转对应界面 */
+  function tryUnlock(role, pwd) {
+    const errEl = document.getElementById(`unlock-${role}-error`);
+
+    if (!hasPassword(role)) {
+      errEl.textContent = `请先设置${ROLES[role].label}专属密码`;
+      return;
+    }
+    if (!pwd) {
+      errEl.textContent = '请输入密码';
+      return;
+    }
+    if (!verifyPassword(role, pwd)) {
+      errEl.textContent = '密码错误，请重试';
+      return;
+    }
+
+    // 校验通过，跳转专属界面
+    errEl.textContent = '';
+    unlockedRole = role;
+    currentPage = role;
+    navigateToPage(role);
+    showToast(`${ROLES[role].label}界面已解锁`);
+  }
+
+  /** 锁定退出：回到密码验证页 */
+  function lockAndReturn() {
+    unlockedRole = null;
+    currentPage = 'auth';
+    document.getElementById('unlock-male-pwd').value = '';
+    document.getElementById('unlock-female-pwd').value = '';
+    document.getElementById('unlock-male-error').textContent = '';
+    document.getElementById('unlock-female-error').textContent = '';
+    navigateToPage('auth');
+    showToast('已锁定，请重新输入密码');
+  }
+
+  /** 页面分层跳转 */
+  function navigateToPage(page) {
+    currentPage = page;
+    const meta = PAGE_META[page];
+
+    // 更新页码指示器
+    document.getElementById('pageIndicator').textContent =
+      `第 ${meta.num} 页 · ${meta.title}`;
+
+    const authPage = document.getElementById('authPage');
+    const appMain = document.getElementById('appMain');
+    const malePanel = document.getElementById('malePanel');
+    const femalePanel = document.getElementById('femalePanel');
+    const todayBadge = document.getElementById('todayBadge');
+
+    if (page === 'auth') {
+      // 密码验证页：隐藏男女界面
+      authPage.classList.remove('hidden');
+      appMain.classList.add('hidden');
+      malePanel.classList.add('hidden');
+      femalePanel.classList.add('hidden');
+      todayBadge.classList.add('hidden');
+      renderAuthManage();
+    } else {
+      // 解锁后：仅显示对应身份界面
+      authPage.classList.add('hidden');
+      appMain.classList.remove('hidden');
+      malePanel.classList.toggle('hidden', page !== 'male');
+      femalePanel.classList.toggle('hidden', page !== 'female');
+      todayBadge.classList.remove('hidden');
+      renderApp();
+    }
+  }
+
+  /** 渲染密码设置/修改区域 */
+  function renderAuthManage() {
+    ['male', 'female'].forEach(role => {
+      const el = document.getElementById(`manage-${role}`);
+      const label = ROLES[role].label;
+      const exists = hasPassword(role);
+
+      if (!exists) {
+        // 首次设置
+        el.innerHTML = `
+          <h4>${role === 'male' ? '👦' : '👧'} ${label}密码设置</h4>
+          <p class="manage-hint">首次使用，请设置${label}专属密码（至少4位）</p>
+          <div class="pwd-field">
+            <label>新密码</label>
+            <input type="password" class="pwd-input" id="set-${role}-new" placeholder="输入新密码" autocomplete="new-password">
+          </div>
+          <div class="pwd-field">
+            <label>确认密码</label>
+            <input type="password" class="pwd-input" id="set-${role}-confirm" placeholder="再次输入" autocomplete="new-password">
+          </div>
+          <button class="btn btn-primary btn-sm" id="set-${role}-btn">设置${label}密码</button>
+        `;
+      } else {
+        // 修改密码（需原密码）
+        el.innerHTML = `
+          <h4>${role === 'male' ? '👦' : '👧'} ${label}密码修改</h4>
+          <p class="manage-hint">修改需先核验原密码</p>
+          <div class="pwd-field">
+            <label>原密码</label>
+            <input type="password" class="pwd-input" id="chg-${role}-old" placeholder="输入原密码" autocomplete="current-password">
+          </div>
+          <div class="pwd-field">
+            <label>新密码</label>
+            <input type="password" class="pwd-input" id="chg-${role}-new" placeholder="输入新密码" autocomplete="new-password">
+          </div>
+          <div class="pwd-field">
+            <label>确认新密码</label>
+            <input type="password" class="pwd-input" id="chg-${role}-confirm" placeholder="再次输入新密码" autocomplete="new-password">
+          </div>
+          <button class="btn btn-outline btn-sm" id="chg-${role}-btn">修改${label}密码</button>
+        `;
+      }
+    });
+    bindAuthEvents();
+  }
+
+  function bindAuthEvents() {
+    // 解锁按钮
+    document.getElementById('unlock-male-btn').onclick = () => {
+      tryUnlock('male', document.getElementById('unlock-male-pwd').value);
+    };
+    document.getElementById('unlock-female-btn').onclick = () => {
+      tryUnlock('female', document.getElementById('unlock-female-pwd').value);
+    };
+
+    // 回车解锁
+    document.getElementById('unlock-male-pwd').onkeydown = (e) => {
+      if (e.key === 'Enter') tryUnlock('male', e.target.value);
+    };
+    document.getElementById('unlock-female-pwd').onkeydown = (e) => {
+      if (e.key === 'Enter') tryUnlock('female', e.target.value);
+    };
+
+    ['male', 'female'].forEach(role => {
+      const setBtn = document.getElementById(`set-${role}-btn`);
+      const chgBtn = document.getElementById(`chg-${role}-btn`);
+
+      if (setBtn) {
+        setBtn.onclick = () => {
+          const newPwd = document.getElementById(`set-${role}-new`).value;
+          const confirm = document.getElementById(`set-${role}-confirm`).value;
+          if (newPwd !== confirm) {
+            showToast('两次密码不一致');
+            return;
+          }
+          const res = setPassword(role, newPwd);
+          showToast(res.msg);
+          if (res.ok) renderAuthManage();
+        };
+      }
+
+      if (chgBtn) {
+        chgBtn.onclick = () => {
+          const oldPwd = document.getElementById(`chg-${role}-old`).value;
+          const newPwd = document.getElementById(`chg-${role}-new`).value;
+          const confirm = document.getElementById(`chg-${role}-confirm`).value;
+          if (newPwd !== confirm) {
+            showToast('两次新密码不一致');
+            return;
+          }
+          const res = changePassword(role, oldPwd, newPwd);
+          showToast(res.msg);
+          if (res.ok) {
+            document.getElementById(`chg-${role}-old`).value = '';
+            document.getElementById(`chg-${role}-new`).value = '';
+            document.getElementById(`chg-${role}-confirm`).value = '';
+          }
+        };
+      }
+    });
+  }
 
   // ---------- 数据读写 ----------
 
-  /**
-   * 获取今日日期字符串 YYYY-MM-DD
-   */
   function getTodayStr() {
     const d = new Date();
     return formatDate(d);
   }
 
-  /**
-   * 格式化日期
-   */
   function formatDate(date) {
     const y = date.getFullYear();
     const m = String(date.getMonth() + 1).padStart(2, '0');
@@ -525,18 +767,12 @@
     return `${y}-${m}-${day}`;
   }
 
-  /**
-   * 根据起始日期和天数索引计算具体日期
-   */
   function getDateByDayIndex(startDateStr, dayIndex) {
     const d = new Date(startDateStr + 'T00:00:00');
     d.setDate(d.getDate() + dayIndex);
     return formatDate(d);
   }
 
-  /**
-   * 计算今天是周期内第几天（0~364），超出范围返回 -1
-   */
   function getTodayDayIndex(startDateStr) {
     const start = new Date(startDateStr + 'T00:00:00');
     const today = new Date();
@@ -546,151 +782,89 @@
     return diff;
   }
 
-  /**
-   * 初始化或读取本地数据
-   * 数据结构：
-   * {
-   *   startDate: '2026-07-03',        // 周期起始日
-   *   male:   { records: { '0': { mood, diary } } },
-   *   female: { records: { '0': { mood, diary } } },
-   *   unlock: { date, maleViewFemale, femaleViewMale }, // 当日解锁状态
-   *   pendingRequest: { from, date } | null               // 待处理申请
-   * }
-   */
   function loadData() {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const data = JSON.parse(raw);
-      // 日期变更时重置当日解锁与申请状态
+      if (!data.passwords) data.passwords = { male: null, female: null };
       resetDailyStateIfNeeded(data);
       return data;
     }
-    // 首次访问：以今天为周期第0天
     const data = {
       startDate: getTodayStr(),
+      passwords: { male: null, female: null },
       male: { records: {} },
       female: { records: {} },
-      unlock: {
-        date: getTodayStr(),
-        maleViewFemale: false,
-        femaleViewMale: false
-      },
+      unlock: { date: getTodayStr(), maleViewFemale: false, femaleViewMale: false },
       pendingRequest: null
     };
     saveData(data);
     return data;
   }
 
-  /**
-   * 若跨天则重置解锁状态与待处理申请（次日需重新申请）
-   */
   function resetDailyStateIfNeeded(data) {
     const today = getTodayStr();
     if (data.unlock.date !== today) {
-      data.unlock = {
-        date: today,
-        maleViewFemale: false,
-        femaleViewMale: false
-      };
+      data.unlock = { date: today, maleViewFemale: false, femaleViewMale: false };
       data.pendingRequest = null;
       saveData(data);
     }
   }
 
-  /**
-   * 保存数据到 LocalStorage
-   */
   function saveData(data) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   }
 
-  // ---------- 业务操作 ----------
+  // ---------- 心情记录业务 ----------
 
-  /**
-   * 保存某角色今日记录（心情 + 日记），每人每天仅一条，重复保存为覆盖
-   */
   function saveTodayRecord(role, mood, diary) {
+    if (currentPage !== role) return false;
     const data = loadData();
     const dayIndex = getTodayDayIndex(data.startDate);
-    if (dayIndex < 0) {
-      showToast('当前不在365天记录周期内');
-      return false;
-    }
-    if (!mood) {
-      showToast('请选择今日心情');
-      return false;
-    }
+    if (dayIndex < 0) { showToast('当前不在365天记录周期内'); return false; }
+    if (!mood) { showToast('请选择今日心情'); return false; }
     data[role].records[String(dayIndex)] = { mood, diary: diary || '' };
     saveData(data);
     showToast('今日记录已保存');
-    render();
+    renderApp();
     return true;
   }
 
-  /**
-   * 发起查看对方今日日记的申请
-   */
   function requestViewDiary(fromRole) {
+    if (currentPage !== fromRole) return;
     const data = loadData();
     const dayIndex = getTodayDayIndex(data.startDate);
-    if (dayIndex < 0) {
-      showToast('当前不在365天记录周期内');
-      return;
-    }
-    const toRole = ROLES[fromRole].partner;
-
-    // 已解锁则无需申请
+    if (dayIndex < 0) { showToast('当前不在365天记录周期内'); return; }
     const unlockKey = fromRole === 'male' ? 'maleViewFemale' : 'femaleViewMale';
-    if (data.unlock[unlockKey]) {
-      showToast('已获得查看权限');
-      return;
-    }
-
-    // 已有待处理申请
+    if (data.unlock[unlockKey]) { showToast('已获得查看权限'); return; }
     if (data.pendingRequest) {
-      if (data.pendingRequest.from === fromRole) {
-        showToast('申请已发送，等待对方回应');
-      } else {
-        showToast('对方已发来申请，请先处理');
-      }
+      showToast(data.pendingRequest.from === fromRole ? '申请已发送，等待对方回应' : '对方已发来申请，请先处理');
       return;
     }
-
     data.pendingRequest = { from: fromRole, date: getTodayStr() };
     saveData(data);
     showToast('查看申请已发送');
-    render();
+    renderApp();
   }
 
-  /**
-   * 处理申请：同意或拒绝
-   */
   function handleRequest(agreed) {
     const data = loadData();
     if (!data.pendingRequest) return;
-
     const { from } = data.pendingRequest;
     if (agreed) {
-      // 同意：授予申请方查看权限（仅当日有效）
-      if (from === 'male') {
-        data.unlock.maleViewFemale = true;
-      } else {
-        data.unlock.femaleViewMale = true;
-      }
+      if (from === 'male') data.unlock.maleViewFemale = true;
+      else data.unlock.femaleViewMale = true;
       showToast('已同意对方查看今日日记');
     } else {
       showToast('已拒绝查看申请');
     }
     data.pendingRequest = null;
     saveData(data);
-    render();
+    renderApp();
   }
 
-  // ---------- UI 渲染 ----------
+  // ---------- 专属界面渲染 ----------
 
-  /**
-   * 渲染单个角色板块
-   */
   function renderPanel(role) {
     const data = loadData();
     const info = ROLES[role];
@@ -698,12 +872,8 @@
     const inCycle = dayIndex >= 0;
     const todayRecord = inCycle ? data[role].records[String(dayIndex)] : null;
     const partnerRecord = inCycle ? data[info.partner].records[String(dayIndex)] : null;
-
-    // 解锁状态：我是否可查看对方今日日记
     const unlockKey = role === 'male' ? 'maleViewFemale' : 'femaleViewMale';
     const canViewPartner = data.unlock[unlockKey];
-
-    // 申请状态
     const hasPendingFromMe = data.pendingRequest && data.pendingRequest.from === role;
     const hasPendingToMe = data.pendingRequest && data.pendingRequest.from === info.partner;
 
@@ -720,131 +890,84 @@
         </div>
       `).join('');
 
-      // 对方今日日记展示（仅解锁后可见）
       let partnerDiaryHtml = '';
       if (canViewPartner && partnerRecord) {
-        partnerDiaryHtml = `
-          <div class="partner-diary-box visible">
-            <div class="label">🔓 ${info.partnerLabel}今日日记（已解锁）</div>
-            <div class="content">${escapeHtml(partnerRecord.diary) || '（对方未填写日记）'}</div>
-          </div>`;
-      } else if (canViewPartner && !partnerRecord) {
-        partnerDiaryHtml = `
-          <div class="partner-diary-box visible">
-            <div class="label">🔓 ${info.partnerLabel}今日日记（已解锁）</div>
-            <div class="content">（对方今日尚未记录）</div>
-          </div>`;
+        partnerDiaryHtml = `<div class="partner-diary-box visible">
+          <div class="label">🔓 ${info.partnerLabel}今日日记（已解锁）</div>
+          <div class="content">${escapeHtml(partnerRecord.diary) || '（对方未填写日记）'}</div>
+        </div>`;
+      } else if (canViewPartner) {
+        partnerDiaryHtml = `<div class="partner-diary-box visible">
+          <div class="label">🔓 ${info.partnerLabel}今日日记（已解锁）</div>
+          <div class="content">（对方今日尚未记录）</div>
+        </div>`;
       }
 
       let unlockStatus = '';
-      if (canViewPartner) {
-        unlockStatus = '<span class="unlock-status">✅ 已获得查看权限（仅今日有效）</span>';
-      } else if (hasPendingFromMe) {
-        unlockStatus = '<span class="unlock-status">⏳ 申请已发送，等待对方回应...</span>';
-      }
+      if (canViewPartner) unlockStatus = '<span class="unlock-status">✅ 已获得查看权限（仅今日有效）</span>';
+      else if (hasPendingFromMe) unlockStatus = '<span class="unlock-status">⏳ 申请已发送，等待对方回应...</span>';
 
-      // 被申请方专属弹窗：仅收到申请的一方显示同意/拒绝按钮
       let requestPopupHtml = '';
       if (hasPendingToMe) {
-        requestPopupHtml = `
-          <div class="request-popup">
-            <h4>📩 日记查看申请</h4>
-            <p>${info.partnerLabel}申请查看你今日的私密日记，是否同意？</p>
-            <div class="modal-actions">
-              <button class="btn btn-danger" data-action="reject" data-role="${role}">拒绝</button>
-              <button class="btn btn-success" data-action="agree" data-role="${role}">同意</button>
-            </div>
-          </div>`;
+        requestPopupHtml = `<div class="request-popup">
+          <h4>📩 日记查看申请</h4>
+          <p>${info.partnerLabel}申请查看你今日的私密日记，是否同意？</p>
+          <div class="modal-actions">
+            <button class="btn btn-danger" data-action="reject">拒绝</button>
+            <button class="btn btn-success" data-action="agree">同意</button>
+          </div>
+        </div>`;
       }
 
-      todaySection = `
-        <div class="today-section">
-          <h3 class="section-title">今日记录</h3>
-          <p class="today-date">第 ${dayIndex + 1} 天 · ${todayDateStr}</p>
-          <div class="mood-group">${moodRadios}</div>
-          <textarea class="diary-input" id="diary-${role}" placeholder="写下今日私密日记（默认对方不可见）...">${todayRecord ? escapeHtml(todayRecord.diary) : ''}</textarea>
-          <button class="btn btn-primary" id="save-${role}">保存今日记录</button>
-
-          <div class="unlock-section">
-            <h4>查看${info.partnerLabel}今日日记</h4>
-            <button class="btn btn-outline" id="request-${role}"
-              ${canViewPartner || hasPendingFromMe ? 'disabled' : ''}>
-              ${hasPendingFromMe ? '等待回应中...' : '申请查看'}
-            </button>
-            ${unlockStatus}
-            ${partnerDiaryHtml}
-          </div>
-          ${requestPopupHtml}
-        </div>`;
+      todaySection = `<div class="today-section">
+        <h3 class="section-title">今日记录</h3>
+        <p class="today-date">第 ${dayIndex + 1} 天 · ${todayDateStr}</p>
+        <div class="mood-group">${moodRadios}</div>
+        <textarea class="diary-input" id="diary-${role}" placeholder="写下今日私密日记（默认对方不可见）...">${todayRecord ? escapeHtml(todayRecord.diary) : ''}</textarea>
+        <button class="btn btn-primary" id="save-${role}">保存今日记录</button>
+        <div class="unlock-section">
+          <h4>查看${info.partnerLabel}今日日记</h4>
+          <button class="btn btn-outline" id="request-${role}" ${canViewPartner || hasPendingFromMe ? 'disabled' : ''}>
+            ${hasPendingFromMe ? '等待回应中...' : '申请查看'}
+          </button>
+          ${unlockStatus}
+          ${partnerDiaryHtml}
+        </div>
+        ${requestPopupHtml}
+      </div>`;
     }
 
-    // 365天日历列表
     const calendarRows = [];
     for (let i = 0; i < CYCLE_DAYS; i++) {
       const dateStr = getDateByDayIndex(data.startDate, i);
       const selfRec = data[role].records[String(i)];
       const isToday = i === dayIndex;
-
-      // 自己的记录：完整展示
-      let selfHtml;
-      if (selfRec) {
-        selfHtml = `
-          <span class="mood-tag tag-${selfRec.mood}">${selfRec.mood}</span>
-          <div>${escapeHtml(selfRec.diary) || '（无日记）'}</div>`;
-      } else {
-        selfHtml = '未记录';
-      }
-
-      // 对方记录：列表中始终上锁隐藏
-      const partnerHtml = `
-        <span class="lock-icon">🔒</span>
-        <span>已锁定</span>`;
-
-      calendarRows.push(`
-        <div class="day-item" data-day="${i}">
-          <div>
-            <div class="day-num ${isToday ? 'today' : ''}">D${i + 1}</div>
-            <div class="day-date">${dateStr}</div>
-          </div>
-          <div class="record-self ${selfRec ? '' : 'empty'}">${selfHtml}</div>
-          <div class="record-partner">${partnerHtml}</div>
-        </div>
-      `);
+      let selfHtml = selfRec
+        ? `<span class="mood-tag tag-${selfRec.mood}">${selfRec.mood}</span><div>${escapeHtml(selfRec.diary) || '（无日记）'}</div>`
+        : '未记录';
+      calendarRows.push(`<div class="day-item" data-day="${i}">
+        <div><div class="day-num ${isToday ? 'today' : ''}">D${i + 1}</div><div class="day-date">${dateStr}</div></div>
+        <div class="record-self ${selfRec ? '' : 'empty'}">${selfHtml}</div>
+        <div class="record-partner"><span>🔒</span><span>已锁定</span></div>
+      </div>`);
     }
 
-    const calendarSection = `
-      <div class="calendar-section">
-        <h3 class="section-title">365天记录列表</h3>
-        <div class="list-header">
-          <span>日期</span>
-          <span>我的记录</span>
-          <span>${info.partnerLabel}（锁定）</span>
-        </div>
-        ${calendarRows.join('')}
-      </div>`;
-
-    return todaySection + calendarSection;
+    return todaySection + `<div class="calendar-section">
+      <h3 class="section-title">365天记录列表</h3>
+      <div class="list-header"><span>日期</span><span>我的记录</span><span>${info.partnerLabel}（锁定）</span></div>
+      ${calendarRows.join('')}
+    </div>`;
   }
 
-  /**
-   * HTML 转义，防止 XSS
-   */
   function escapeHtml(str) {
     if (!str) return '';
-    return str
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
-  /**
-   * 全页渲染
-   */
-  function render() {
-    const data = loadData();
+  function renderApp() {
+    if (currentPage === 'auth') return;
 
-    // 更新页头信息
+    const data = loadData();
     const endDate = getDateByDayIndex(data.startDate, CYCLE_DAYS - 1);
     document.getElementById('cycleInfo').textContent =
       `记录周期：${data.startDate} 至 ${endDate}（共365天）`;
@@ -853,70 +976,43 @@
     const badge = document.getElementById('todayBadge');
     if (dayIndex >= 0) {
       badge.textContent = `今天是第 ${dayIndex + 1} 天`;
-      badge.style.display = 'inline-block';
+      badge.classList.remove('hidden');
     } else {
-      badge.style.display = 'none';
+      badge.classList.add('hidden');
     }
 
-    // 渲染两个板块
-    document.getElementById('maleBody').innerHTML = renderPanel('male');
-    document.getElementById('femaleBody').innerHTML = renderPanel('female');
-
-    // 绑定事件
-    bindEvents();
-
-    // 滚动到今日行
-    scrollToToday('male', dayIndex);
-    scrollToToday('female', dayIndex);
+    const role = currentPage;
+    document.getElementById(`${role}Body`).innerHTML = renderPanel(role);
+    bindAppEvents(role);
+    scrollToToday(role, dayIndex);
   }
 
-  /**
-   * 日历列表滚动到今日
-   */
   function scrollToToday(role, dayIndex) {
     if (dayIndex < 0) return;
-    const panel = document.getElementById(role === 'male' ? 'malePanel' : 'femalePanel');
-    const todayRow = panel.querySelector(`[data-day="${dayIndex}"]`);
-    if (todayRow) {
-      todayRow.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    const panel = document.getElementById(`${role}Panel`);
+    const row = panel.querySelector(`[data-day="${dayIndex}"]`);
+    if (row) row.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  }
+
+  function bindAppEvents(role) {
+    const panelEl = document.getElementById(`${role}Panel`);
+    const saveBtn = document.getElementById(`save-${role}`);
+    const requestBtn = document.getElementById(`request-${role}`);
+    const lockBtn = document.getElementById(role === 'male' ? 'lockBtn' : 'lockBtnFemale');
+
+    if (saveBtn) {
+      saveBtn.onclick = () => {
+        const mood = document.querySelector(`input[name="mood-${role}"]:checked`);
+        saveTodayRecord(role, mood ? mood.value : '', document.getElementById(`diary-${role}`).value);
+      };
     }
+    if (requestBtn) requestBtn.onclick = () => requestViewDiary(role);
+    if (lockBtn) lockBtn.onclick = lockAndReturn;
+
+    panelEl.querySelectorAll('[data-action="agree"]').forEach(b => b.onclick = () => handleRequest(true));
+    panelEl.querySelectorAll('[data-action="reject"]').forEach(b => b.onclick = () => handleRequest(false));
   }
 
-  /**
-   * 绑定按钮事件
-   */
-  function bindEvents() {
-    ['male', 'female'].forEach(role => {
-      const panelEl = document.getElementById(role === 'male' ? 'malePanel' : 'femalePanel');
-      const saveBtn = document.getElementById(`save-${role}`);
-      const requestBtn = document.getElementById(`request-${role}`);
-
-      if (saveBtn) {
-        saveBtn.onclick = () => {
-          const moodInput = document.querySelector(`input[name="mood-${role}"]:checked`);
-          const mood = moodInput ? moodInput.value : '';
-          const diary = document.getElementById(`diary-${role}`).value;
-          saveTodayRecord(role, mood, diary);
-        };
-      }
-
-      if (requestBtn) {
-        requestBtn.onclick = () => requestViewDiary(role);
-      }
-
-      // 被申请方：同意/拒绝按钮（仅出现在收到申请的板块）
-      panelEl.querySelectorAll('[data-action="agree"]').forEach(btn => {
-        btn.onclick = () => handleRequest(true);
-      });
-      panelEl.querySelectorAll('[data-action="reject"]').forEach(btn => {
-        btn.onclick = () => handleRequest(false);
-      });
-    });
-  }
-
-  /**
-   * 显示操作提示
-   */
   function showToast(msg) {
     const toast = document.getElementById('toast');
     toast.textContent = msg;
@@ -924,13 +1020,14 @@
     setTimeout(() => toast.classList.remove('show'), 2500);
   }
 
-  // ---------- 初始化 ----------
-  render();
+  // ---------- 初始化：固定从密码验证页启动 ----------
+  navigateToPage('auth');
 
-  // 定时检查跨天重置（每分钟）
   setInterval(() => {
-    loadData();
-    render();
+    if (currentPage !== 'auth') {
+      loadData();
+      renderApp();
+    }
   }, 60000);
 
   </script>
