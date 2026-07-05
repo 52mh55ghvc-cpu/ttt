@@ -2,18 +2,24 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="format-detection" content="telephone=no">
   <title>情侣双人心情记录</title>
   <style>
     /* ========== 全局样式 ========== */
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+      font-family: "PingFang SC", "Microsoft YaHei", -apple-system, BlinkMacSystemFont, sans-serif;
       background: linear-gradient(135deg, #fdf2f8 0%, #eff6ff 100%);
       min-height: 100vh;
+      min-height: -webkit-fill-available;
       color: #334155;
       line-height: 1.6;
+      padding-left: env(safe-area-inset-left);
+      padding-right: env(safe-area-inset-right);
+      -webkit-text-size-adjust: 100%;
     }
 
     .hidden { display: none !important; }
@@ -115,11 +121,12 @@
 
     .pwd-input {
       width: 100%;
-      padding: 10px 12px;
+      padding: 12px;
       border: 2px solid #e2e8f0;
       border-radius: 8px;
-      font-size: 0.9rem;
+      font-size: 16px;
       font-family: inherit;
+      -webkit-appearance: none;
     }
 
     .pwd-input:focus {
@@ -281,9 +288,10 @@
       border: 2px solid #e2e8f0;
       border-radius: 10px;
       font-family: inherit;
-      font-size: 0.9rem;
+      font-size: 16px;
       resize: vertical;
       margin-bottom: 12px;
+      -webkit-appearance: none;
     }
 
     .diary-input:focus { outline: none; border-color: #94a3b8; }
@@ -345,7 +353,7 @@
     .request-popup p { font-size: 0.85rem; color: #b45309; margin-bottom: 14px; }
     .request-popup .modal-actions { display: flex; gap: 10px; }
 
-    .calendar-section { max-height: 480px; overflow-y: auto; }
+    .calendar-section { max-height: 480px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
 
     .day-item {
       display: grid;
@@ -430,6 +438,17 @@
     .tag-轻微不开心 { background: #dbeafe; color: #2563eb; }
     .tag-极度难过 { background: #bfdbfe; color: #1e40af; }
     .tag-生气烦躁 { background: #fee2e2; color: #dc2626; }
+
+    /* 存储不可用提示 */
+    .storage-error {
+      margin: 16px;
+      padding: 16px;
+      background: #fee2e2;
+      color: #991b1b;
+      border-radius: 12px;
+      text-align: center;
+      font-size: 0.9rem;
+    }
   </style>
 </head>
 <body>
@@ -783,23 +802,35 @@
   }
 
   function loadData() {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      const data = JSON.parse(raw);
-      if (!data.passwords) data.passwords = { male: null, female: null };
-      resetDailyStateIfNeeded(data);
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const data = JSON.parse(raw);
+        if (!data.passwords) data.passwords = { male: null, female: null };
+        resetDailyStateIfNeeded(data);
+        return data;
+      }
+      const data = {
+        startDate: getTodayStr(),
+        passwords: { male: null, female: null },
+        male: { records: {} },
+        female: { records: {} },
+        unlock: { date: getTodayStr(), maleViewFemale: false, femaleViewMale: false },
+        pendingRequest: null
+      };
+      saveData(data);
       return data;
+    } catch (e) {
+      showStorageError();
+      return {
+        startDate: getTodayStr(),
+        passwords: { male: null, female: null },
+        male: { records: {} },
+        female: { records: {} },
+        unlock: { date: getTodayStr(), maleViewFemale: false, femaleViewMale: false },
+        pendingRequest: null
+      };
     }
-    const data = {
-      startDate: getTodayStr(),
-      passwords: { male: null, female: null },
-      male: { records: {} },
-      female: { records: {} },
-      unlock: { date: getTodayStr(), maleViewFemale: false, femaleViewMale: false },
-      pendingRequest: null
-    };
-    saveData(data);
-    return data;
   }
 
   function resetDailyStateIfNeeded(data) {
@@ -812,7 +843,20 @@
   }
 
   function saveData(data) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch (e) {
+      showStorageError();
+    }
+  }
+
+  function showStorageError() {
+    if (document.getElementById('storageError')) return;
+    const el = document.createElement('div');
+    el.id = 'storageError';
+    el.className = 'storage-error';
+    el.textContent = '⚠️ 无法使用本地存储，请关闭 Safari 无痕模式，或检查浏览器隐私设置后刷新页面';
+    document.body.prepend(el);
   }
 
   // ---------- 心情记录业务 ----------
@@ -937,26 +981,48 @@
       </div>`;
     }
 
-    const calendarRows = [];
-    for (let i = 0; i < CYCLE_DAYS; i++) {
-      const dateStr = getDateByDayIndex(data.startDate, i);
-      const selfRec = data[role].records[String(i)];
-      const isToday = i === dayIndex;
-      let selfHtml = selfRec
-        ? `<span class="mood-tag tag-${selfRec.mood}">${selfRec.mood}</span><div>${escapeHtml(selfRec.diary) || '（无日记）'}</div>`
-        : '未记录';
-      calendarRows.push(`<div class="day-item" data-day="${i}">
-        <div><div class="day-num ${isToday ? 'today' : ''}">D${i + 1}</div><div class="day-date">${dateStr}</div></div>
-        <div class="record-self ${selfRec ? '' : 'empty'}">${selfHtml}</div>
-        <div class="record-partner"><span>🔒</span><span>已锁定</span></div>
-      </div>`);
-    }
-
     return todaySection + `<div class="calendar-section">
       <h3 class="section-title">365天记录列表</h3>
       <div class="list-header"><span>日期</span><span>我的记录</span><span>${info.partnerLabel}（锁定）</span></div>
-      ${calendarRows.join('')}
+      <div id="calendar-${role}" class="calendar-list"></div>
     </div>`;
+  }
+
+  /** 分批渲染365天列表，避免手机端一次性插入过多DOM卡顿 */
+  function renderCalendarLazy(role, dayIndex) {
+    const container = document.getElementById(`calendar-${role}`);
+    if (!container) return;
+    const data = loadData();
+    container.innerHTML = '';
+    let i = 0;
+    const batch = 40;
+
+    function renderBatch() {
+      const frag = document.createDocumentFragment();
+      const end = Math.min(i + batch, CYCLE_DAYS);
+      for (; i < end; i++) {
+        const dateStr = getDateByDayIndex(data.startDate, i);
+        const selfRec = data[role].records[String(i)];
+        const isToday = i === dayIndex;
+        const selfHtml = selfRec
+          ? `<span class="mood-tag tag-${selfRec.mood}">${selfRec.mood}</span><div>${escapeHtml(selfRec.diary) || '（无日记）'}</div>`
+          : '未记录';
+        const div = document.createElement('div');
+        div.className = 'day-item';
+        div.dataset.day = i;
+        div.innerHTML = `<div><div class="day-num ${isToday ? 'today' : ''}">D${i + 1}</div><div class="day-date">${dateStr}</div></div>
+          <div class="record-self ${selfRec ? '' : 'empty'}">${selfHtml}</div>
+          <div class="record-partner"><span>🔒</span><span>已锁定</span></div>`;
+        frag.appendChild(div);
+      }
+      container.appendChild(frag);
+      if (i < CYCLE_DAYS) {
+        requestAnimationFrame(renderBatch);
+      } else if (dayIndex >= 0) {
+        scrollToToday(role, dayIndex);
+      }
+    }
+    renderBatch();
   }
 
   function escapeHtml(str) {
@@ -982,9 +1048,10 @@
     }
 
     const role = currentPage;
+    const dayIndex = getTodayDayIndex(loadData().startDate);
     document.getElementById(`${role}Body`).innerHTML = renderPanel(role);
     bindAppEvents(role);
-    scrollToToday(role, dayIndex);
+    renderCalendarLazy(role, dayIndex);
   }
 
   function scrollToToday(role, dayIndex) {
@@ -1021,14 +1088,19 @@
   }
 
   // ---------- 初始化：固定从密码验证页启动 ----------
-  navigateToPage('auth');
-
-  setInterval(() => {
-    if (currentPage !== 'auth') {
-      loadData();
-      renderApp();
+  document.addEventListener('DOMContentLoaded', () => {
+    try {
+      navigateToPage('auth');
+      setInterval(() => {
+        if (currentPage !== 'auth') {
+          loadData();
+          renderApp();
+        }
+      }, 60000);
+    } catch (e) {
+      document.body.innerHTML = '<div class="storage-error" style="margin:40px 20px">页面加载失败，请刷新重试或使用 Safari 非无痕模式打开</div>';
     }
-  }, 60000);
+  });
 
   </script>
 </body>
