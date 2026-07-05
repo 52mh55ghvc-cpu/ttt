@@ -2,15 +2,19 @@
 
 浏览器打开即可使用，无需安装。
 
-## 手机访问链接（请用下面链接，不要用 jsdelivr）
+## 手机访问链接
 
-**主链接：**
-https://nancy-coordinated-collector-trial.trycloudflare.com
+### 推荐（稳定，不会显示源码）
 
-**备用链接：**
+**请用这个链接：**
 https://htmlpreview.github.io/?https://raw.githubusercontent.com/52mh55ghvc-cpu/ttt/main/index.html
 
-> ⚠️ 不要使用 `cdn.jsdelivr.net` 链接，手机 Safari 会把它当成纯文本显示源码。
+### 临时链接（几小时后可能失效，出现 530 错误）
+
+https://frankfurt-organisations-ace-coastal.trycloudflare.com
+
+> ⚠️ 不要使用 `cdn.jsdelivr.net` 链接，手机会显示 HTML 源码。
+> ⚠️ `trycloudflare.com` 临时隧道会断开，出现 530 请换上面的推荐链接。
 
 ## 本地使用（最稳定）
 
