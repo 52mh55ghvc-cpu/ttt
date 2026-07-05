@@ -1,24 +1,43 @@
 # 情侣双人心情记录
 
-浏览器打开即可使用，无需安装。
+## ⚠️ 重要：手机请用「保存到本地」方式使用
 
-## 手机访问链接
+在线链接在 iPhone 上经常出问题（显示源码、530 网络错误），**请把文件保存到手机本地后再用**。
 
-### 推荐（稳定，不会显示源码）
+---
 
-**请用这个链接：**
-https://htmlpreview.github.io/?https://raw.githubusercontent.com/52mh55ghvc-cpu/ttt/main/index.html
+## iPhone 三步安装（推荐）
 
-### 临时链接（几小时后可能失效，出现 530 错误）
+### 方法一：从 GitHub 下载（最可靠）
 
-https://frankfurt-organisations-ace-coastal.trycloudflare.com
+1. 手机 Safari 打开：
+   **https://github.com/52mh55ghvc-cpu/ttt/blob/main/index.html**
 
-> ⚠️ 不要使用 `cdn.jsdelivr.net` 链接，手机会显示 HTML 源码。
-> ⚠️ `trycloudflare.com` 临时隧道会断开，出现 530 请换上面的推荐链接。
+2. 点击右上角 **「⋯」** → **「共享」** → **「存储到"文件"」**
 
-## 本地使用（最稳定）
+3. 打开 **「文件」App** → 找到 `index.html` → 点击用 **Safari** 打开
 
-1. 下载 `index.html` 到手机
-2. 用 Safari 打开该文件
+### 方法二：临时链接打开后一键保存
 
-详细说明见 [使用说明.md](./使用说明.md)
+1. 用 Safari 打开临时链接（见下方）
+2. 若页面能显示，点击绿色按钮 **「⬇️ 保存到手机」**
+3. 存储到「文件」后，从文件 App 用 Safari 打开
+
+**临时链接（几小时后可能失效）：**
+https://replacing-technician-patrol-governor.trycloudflare.com
+
+---
+
+## 为什么在线链接不好用？
+
+| 链接类型 | 问题 |
+|---------|------|
+| jsdelivr | 手机显示 HTML 源码 |
+| trycloudflare | 几小时后 530 断线 |
+| htmlpreview | 功能受限，存储异常 |
+
+**本地打开 `index.html` 文件 = 100% 正常使用。**
+
+---
+
+详细功能说明见 [使用说明.md](./使用说明.md)
