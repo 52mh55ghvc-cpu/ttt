@@ -184,6 +184,54 @@
       margin-bottom: 10px;
     }
 
+    /* iPhone 安装引导 */
+    .mobile-guide {
+      background: linear-gradient(135deg, #ecfdf5, #eff6ff);
+      border: 2px solid #34d399;
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 24px;
+    }
+
+    .mobile-guide h3 {
+      font-size: 1rem;
+      color: #047857;
+      margin-bottom: 10px;
+    }
+
+    .mobile-guide ol {
+      margin: 0 0 14px 18px;
+      font-size: 0.85rem;
+      color: #475569;
+    }
+
+    .mobile-guide li { margin-bottom: 6px; }
+
+    .btn-download {
+      width: 100%;
+      padding: 14px;
+      background: #059669;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      min-height: 48px;
+    }
+
+    .btn-download:active { filter: brightness(0.95); }
+
+    .online-warning {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #b91c1c;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      margin-bottom: 16px;
+    }
+
     /* ========== 主内容区（第2/3页） ========== */
     .main-container {
       max-width: 800px;
@@ -297,13 +345,14 @@
     .diary-input:focus { outline: none; border-color: #94a3b8; }
 
     .btn {
-      padding: 10px 18px;
+      padding: 12px 18px;
       border: none;
       border-radius: 8px;
-      font-size: 0.9rem;
+      font-size: 16px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s;
+      min-height: 44px;
     }
 
     .btn:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -462,6 +511,21 @@
 
   <!-- 第1页：密码验证页（启动默认显示，男女界面全部锁定） -->
   <div class="auth-page" id="authPage">
+    <!-- 在线访问提示：引导保存到手机本地 -->
+    <div class="mobile-guide" id="mobileGuide">
+      <h3>📱 iPhone 推荐使用方式（最稳定）</h3>
+      <div class="online-warning" id="onlineWarning" style="display:none">
+        当前为在线链接，可能显示源码或网络错误。请按下方步骤保存到手机本地使用。
+      </div>
+      <ol>
+        <li>点击下方绿色按钮「保存到手机」</li>
+        <li>选择「存储到"文件"」或「下载」</li>
+        <li>打开「文件」App，找到 <strong>情侣心情记录.html</strong></li>
+        <li>点击文件，用 Safari 打开即可正常使用</li>
+      </ol>
+      <button class="btn-download" id="saveToPhoneBtn">⬇️ 保存到手机（一键下载）</button>
+    </div>
+
     <p class="auth-intro">🔐 请输入专属密码解锁对应界面，两组密码独立不互通</p>
 
     <div class="auth-unlock-grid">
@@ -1090,6 +1154,7 @@
   // ---------- 初始化：固定从密码验证页启动 ----------
   document.addEventListener('DOMContentLoaded', () => {
     try {
+      initMobileGuide();
       navigateToPage('auth');
       setInterval(() => {
         if (currentPage !== 'auth') {
@@ -1101,6 +1166,39 @@
       document.body.innerHTML = '<div class="storage-error" style="margin:40px 20px">页面加载失败，请刷新重试或使用 Safari 非无痕模式打开</div>';
     }
   });
+
+  /** 检测在线环境并初始化「保存到手机」功能 */
+  function initMobileGuide() {
+    const isLocal = location.protocol === 'file:' ||
+      location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+    const isBadHost = /jsdelivr|trycloudflare|githack|htmlpreview|raw\.githubusercontent/i
+      .test(location.hostname + location.href);
+
+    if (!isLocal) {
+      document.getElementById('onlineWarning').style.display = 'block';
+    }
+    if (isLocal && !isBadHost) {
+      // 本地打开时隐藏安装引导（已通过文件使用）
+      document.getElementById('mobileGuide').style.display = 'none';
+    }
+
+    document.getElementById('saveToPhoneBtn').onclick = saveToPhone;
+  }
+
+  /** 一键保存 HTML 到手机（iPhone Safari 存到「文件」后本地打开） */
+  function saveToPhone() {
+    const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = '情侣心情记录.html';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 3000);
+    showToast('已触发下载，请在弹窗中选择「存储到文件」');
+  }
 
   </script>
 </body>
