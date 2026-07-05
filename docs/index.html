@@ -217,7 +217,9 @@
       font-size: 16px;
       font-weight: 700;
       cursor: pointer;
-      min-height: 48px;
+      min-height: 52px;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: rgba(0,0,0,0.1);
     }
 
     .btn-download:active { filter: brightness(0.95); }
@@ -352,7 +354,10 @@
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s;
-      min-height: 44px;
+      min-height: 48px;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: rgba(0,0,0,0.1);
+      user-select: none;
     }
 
     .btn:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -511,19 +516,30 @@
 
   <!-- 第1页：密码验证页（启动默认显示，男女界面全部锁定） -->
   <div class="auth-page" id="authPage">
-    <!-- 在线访问提示：引导保存到手机本地 -->
+    <!-- iPhone 专用安装引导 -->
     <div class="mobile-guide" id="mobileGuide">
-      <h3>📱 iPhone 推荐使用方式（最稳定）</h3>
-      <div class="online-warning" id="onlineWarning" style="display:none">
-        当前为在线链接，可能显示源码或网络错误。请按下方步骤保存到手机本地使用。
+      <h3>📱 iPhone 安装说明（必读）</h3>
+      <div class="online-warning" id="onlineWarning">
+        ⚠️ iPhone 若显示<strong>「找不到服务器」</strong>或<strong>530 错误</strong>，是在线链接失效/被屏蔽。<br>
+        <strong>请用下方「方式二」微信传文件，不再依赖任何链接。</strong>
       </div>
-      <ol>
-        <li>点击下方绿色按钮「保存到手机」</li>
-        <li>选择「存储到"文件"」或「下载」</li>
-        <li>打开「文件」App，找到 <strong>情侣心情记录.html</strong></li>
-        <li>点击文件，用 Safari 打开即可正常使用</li>
+      <p class="manage-hint" style="margin-bottom:12px;color:#047857;font-size:0.85rem">
+        适用：iPhone + Safari · 请关闭「无痕浏览」
+      </p>
+      <h4 style="font-size:0.9rem;color:#334155;margin:14px 0 8px">方式一：在线链接（常打不开，可跳过）</h4>
+      <ol style="margin-bottom:12px">
+        <li>用 Safari 打开链接，点绿色按钮「保存到 iPhone」→「存储到"文件"」</li>
       </ol>
-      <button class="btn-download" id="saveToPhoneBtn">⬇️ 保存到手机（一键下载）</button>
+      <button type="button" class="btn-download" id="saveToPhoneBtn">⬇️ 保存到 iPhone（点我）</button>
+      <h4 style="font-size:0.9rem;color:#334155;margin:20px 0 8px">方式二：微信传文件（最稳定，推荐）</h4>
+      <ol>
+        <li>在<strong>电脑</strong>找到 <strong>index.html</strong> 文件</li>
+        <li>电脑微信 → 发给<strong>「文件传输助手」</strong></li>
+        <li>iPhone 微信 → 文件传输助手 → 点开文件</li>
+        <li>点<strong>「⋯」</strong> → <strong>「用其他应用打开」</strong> → <strong>Safari</strong></li>
+        <li>或<strong>「存储到"文件"」</strong>，再从「文件」App 用 Safari 打开</li>
+        <li>以后都从「文件」打开，<strong>不需要任何在线链接</strong></li>
+      </ol>
     </div>
 
     <p class="auth-intro">🔐 请输入专属密码解锁对应界面，两组密码独立不互通</p>
@@ -536,7 +552,7 @@
           <label for="unlock-male-pwd">男生密码</label>
           <input type="password" class="pwd-input" id="unlock-male-pwd" placeholder="输入男生专属密码" autocomplete="off">
         </div>
-        <button class="btn btn-primary" id="unlock-male-btn">解锁男生界面</button>
+        <button type="button" class="btn btn-primary" id="unlock-male-btn">解锁男生界面</button>
         <p class="auth-error" id="unlock-male-error"></p>
       </div>
 
@@ -547,7 +563,7 @@
           <label for="unlock-female-pwd">女生密码</label>
           <input type="password" class="pwd-input" id="unlock-female-pwd" placeholder="输入女生专属密码" autocomplete="off">
         </div>
-        <button class="btn btn-primary" id="unlock-female-btn">解锁女生界面</button>
+        <button type="button" class="btn btn-primary" id="unlock-female-btn">解锁女生界面</button>
         <p class="auth-error" id="unlock-female-error"></p>
       </div>
     </div>
@@ -781,15 +797,13 @@
   }
 
   function bindAuthEvents() {
-    // 解锁按钮
-    document.getElementById('unlock-male-btn').onclick = () => {
+    onTap(document.getElementById('unlock-male-btn'), () => {
       tryUnlock('male', document.getElementById('unlock-male-pwd').value);
-    };
-    document.getElementById('unlock-female-btn').onclick = () => {
+    });
+    onTap(document.getElementById('unlock-female-btn'), () => {
       tryUnlock('female', document.getElementById('unlock-female-pwd').value);
-    };
+    });
 
-    // 回车解锁
     document.getElementById('unlock-male-pwd').onkeydown = (e) => {
       if (e.key === 'Enter') tryUnlock('male', e.target.value);
     };
@@ -802,28 +816,22 @@
       const chgBtn = document.getElementById(`chg-${role}-btn`);
 
       if (setBtn) {
-        setBtn.onclick = () => {
+        onTap(setBtn, () => {
           const newPwd = document.getElementById(`set-${role}-new`).value;
           const confirm = document.getElementById(`set-${role}-confirm`).value;
-          if (newPwd !== confirm) {
-            showToast('两次密码不一致');
-            return;
-          }
+          if (newPwd !== confirm) { showToast('两次密码不一致'); return; }
           const res = setPassword(role, newPwd);
           showToast(res.msg);
           if (res.ok) renderAuthManage();
-        };
+        });
       }
 
       if (chgBtn) {
-        chgBtn.onclick = () => {
+        onTap(chgBtn, () => {
           const oldPwd = document.getElementById(`chg-${role}-old`).value;
           const newPwd = document.getElementById(`chg-${role}-new`).value;
           const confirm = document.getElementById(`chg-${role}-confirm`).value;
-          if (newPwd !== confirm) {
-            showToast('两次新密码不一致');
-            return;
-          }
+          if (newPwd !== confirm) { showToast('两次新密码不一致'); return; }
           const res = changePassword(role, oldPwd, newPwd);
           showToast(res.msg);
           if (res.ok) {
@@ -831,7 +839,7 @@
             document.getElementById(`chg-${role}-new`).value = '';
             document.getElementById(`chg-${role}-confirm`).value = '';
           }
-        };
+        });
       }
     });
   }
@@ -1112,7 +1120,6 @@
     }
 
     const role = currentPage;
-    const dayIndex = getTodayDayIndex(loadData().startDate);
     document.getElementById(`${role}Body`).innerHTML = renderPanel(role);
     bindAppEvents(role);
     renderCalendarLazy(role, dayIndex);
@@ -1132,23 +1139,38 @@
     const lockBtn = document.getElementById(role === 'male' ? 'lockBtn' : 'lockBtnFemale');
 
     if (saveBtn) {
-      saveBtn.onclick = () => {
+      onTap(saveBtn, () => {
         const mood = document.querySelector(`input[name="mood-${role}"]:checked`);
         saveTodayRecord(role, mood ? mood.value : '', document.getElementById(`diary-${role}`).value);
-      };
+      });
     }
-    if (requestBtn) requestBtn.onclick = () => requestViewDiary(role);
-    if (lockBtn) lockBtn.onclick = lockAndReturn;
+    if (requestBtn) onTap(requestBtn, () => requestViewDiary(role));
+    if (lockBtn) onTap(lockBtn, lockAndReturn);
 
-    panelEl.querySelectorAll('[data-action="agree"]').forEach(b => b.onclick = () => handleRequest(true));
-    panelEl.querySelectorAll('[data-action="reject"]').forEach(b => b.onclick = () => handleRequest(false));
+    panelEl.querySelectorAll('[data-action="agree"]').forEach(b => onTap(b, () => handleRequest(true)));
+    panelEl.querySelectorAll('[data-action="reject"]').forEach(b => onTap(b, () => handleRequest(false)));
   }
 
   function showToast(msg) {
     const toast = document.getElementById('toast');
     toast.textContent = msg;
     toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 2500);
+    setTimeout(() => toast.classList.remove('show'), 3500);
+  }
+
+  /** 手机端可靠点击绑定（同时支持 touch 和 click） */
+  function onTap(el, fn) {
+    if (!el) return;
+    let handled = false;
+    const run = (e) => {
+      if (handled) return;
+      handled = true;
+      setTimeout(() => { handled = false; }, 400);
+      e.preventDefault();
+      fn(e);
+    };
+    el.addEventListener('touchend', run, { passive: false });
+    el.addEventListener('click', run);
   }
 
   // ---------- 初始化：固定从密码验证页启动 ----------
@@ -1167,37 +1189,54 @@
     }
   });
 
-  /** 检测在线环境并初始化「保存到手机」功能 */
+  /** 检测 iPhone 环境并初始化「保存到手机」功能 */
   function initMobileGuide() {
     const isLocal = location.protocol === 'file:' ||
       location.hostname === 'localhost' || location.hostname === '127.0.0.1';
-    const isBadHost = /jsdelivr|trycloudflare|githack|htmlpreview|raw\.githubusercontent/i
-      .test(location.hostname + location.href);
 
-    if (!isLocal) {
-      document.getElementById('onlineWarning').style.display = 'block';
-    }
-    if (isLocal && !isBadHost) {
-      // 本地打开时隐藏安装引导（已通过文件使用）
+    if (isLocal) {
       document.getElementById('mobileGuide').style.display = 'none';
     }
+    if (/MicroMessenger/i.test(navigator.userAgent)) {
+      showToast('微信内无法正常使用，请点右上角「⋯」→ 在 Safari 中打开');
+    }
 
-    document.getElementById('saveToPhoneBtn').onclick = saveToPhone;
+    document.getElementById('saveToPhoneBtn').onclick = null;
+    onTap(document.getElementById('saveToPhoneBtn'), saveToPhone);
   }
 
-  /** 一键保存 HTML 到手机（iPhone Safari 存到「文件」后本地打开） */
-  function saveToPhone() {
+  /** 保存到手机：iPhone 用分享面板，其他设备用下载 */
+  async function saveToPhone() {
+    showToast('正在准备文件…');
     const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
     const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const file = new File([blob], '情侣心情记录.html', { type: 'text/html' });
+
+    try {
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file], title: '情侣心情记录' });
+        showToast('iPhone：请点「存储到"文件"」');
+        return;
+      }
+    } catch (e) {
+      if (e.name === 'AbortError') return;
+    }
+
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = '情侣心情记录.html';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(() => URL.revokeObjectURL(url), 3000);
-    showToast('已触发下载，请在弹窗中选择「存储到文件」');
+    const w = window.open(url, '_blank');
+    if (w) {
+      showToast('请在新页面点「共享」→「存储到文件」');
+    } else {
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = '情侣心情记录.html';
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      showToast('若没反应，请长按链接区域选「下载链接文件」');
+    }
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
   }
 
   </script>
