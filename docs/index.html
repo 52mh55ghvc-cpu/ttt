@@ -346,14 +346,21 @@
     }
 
     .gift-item {
-      background: linear-gradient(180deg, #fffdf2, #fff7d6);
-      border: 2px solid #f5b942;
       border-radius: 1.1rem;
       padding: 1rem 0.6rem 0.85rem;
-      box-shadow: 0 0.5rem 1.4rem rgba(245, 185, 66, 0.28);
       text-align: center;
       position: relative;
       width: 100%;
+    }
+    .gift-item[data-gift="A"] {
+      background: linear-gradient(180deg, #fff8fb, #ffe4ec);
+      border: 2px solid #ff8fab;
+      box-shadow: 0 0.5rem 1.4rem rgba(255, 107, 129, 0.22);
+    }
+    .gift-item[data-gift="B"] {
+      background: linear-gradient(180deg, #fffdf2, #fff7d6);
+      border: 2px solid #f5b942;
+      box-shadow: 0 0.5rem 1.4rem rgba(245, 185, 66, 0.28);
     }
 
     .gift-box-emoji {
@@ -379,12 +386,17 @@
       position: absolute;
       top: 0.45rem;
       right: 0.45rem;
-      background: linear-gradient(135deg, #f5b942, #e89a1c);
       color: #fff;
       font-size: 0.68rem;
       font-weight: 700;
       padding: 0.12rem 0.4rem;
       border-radius: 999px;
+    }
+    .gift-item[data-gift="A"] .picked-badge {
+      background: linear-gradient(135deg, #ff8fab, #ff6b81);
+    }
+    .gift-item[data-gift="B"] .picked-badge {
+      background: linear-gradient(135deg, #f5b942, #e89a1c);
     }
 
     .blessing-card {
@@ -492,7 +504,7 @@
       <div class="gift-row">
         <div class="gift-item" data-gift="A">
           <span class="picked-badge">已送达</span>
-          <span class="gift-box-emoji" aria-hidden="true">🎁</span>
+          <span class="gift-box-emoji" aria-hidden="true">💝</span>
           <span class="gift-name">礼物A</span>
         </div>
         <div class="gift-item" data-gift="B">
