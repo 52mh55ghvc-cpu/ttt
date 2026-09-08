@@ -338,67 +338,6 @@
       margin-top: 0.15rem;
     }
 
-    .gift-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.85rem;
-      margin-bottom: 1.1rem;
-    }
-
-    .gift-item {
-      border-radius: 1.1rem;
-      padding: 1rem 0.6rem 0.85rem;
-      text-align: center;
-      position: relative;
-      width: 100%;
-    }
-    .gift-item[data-gift="A"] {
-      background: linear-gradient(180deg, #fff8fb, #ffe4ec);
-      border: 2px solid #ff8fab;
-      box-shadow: 0 0.5rem 1.4rem rgba(255, 107, 129, 0.22);
-    }
-    .gift-item[data-gift="B"] {
-      background: linear-gradient(180deg, #fffdf2, #fff7d6);
-      border: 2px solid #f5b942;
-      box-shadow: 0 0.5rem 1.4rem rgba(245, 185, 66, 0.28);
-    }
-
-    .gift-box-emoji {
-      font-size: 2.6rem;
-      line-height: 1;
-      display: block;
-      animation: boxFloat 2.4s ease-in-out infinite;
-    }
-    .gift-item:nth-child(2) .gift-box-emoji { animation-delay: 0.35s; }
-    @keyframes boxFloat {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-0.25rem); }
-    }
-
-    .gift-name {
-      margin-top: 0.45rem;
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: #9a4d58;
-    }
-
-    .picked-badge {
-      position: absolute;
-      top: 0.45rem;
-      right: 0.45rem;
-      color: #fff;
-      font-size: 0.68rem;
-      font-weight: 700;
-      padding: 0.12rem 0.4rem;
-      border-radius: 999px;
-    }
-    .gift-item[data-gift="A"] .picked-badge {
-      background: linear-gradient(135deg, #ff8fab, #ff6b81);
-    }
-    .gift-item[data-gift="B"] .picked-badge {
-      background: linear-gradient(135deg, #f5b942, #e89a1c);
-    }
-
     .blessing-card {
       background: #fffdf8;
       border-radius: 1.1rem;
@@ -484,7 +423,7 @@
     <section id="page-gift" class="page" aria-label="礼物展示">
       <header class="gift-header">
         <h2>专属于你的惊喜</h2>
-        <p>两份礼物都送给你啦</p>
+        <p>有一封信要给你</p>
       </header>
 
       <!-- 信：信封用 CSS 绘制，不依赖外部图片 -->
@@ -497,20 +436,6 @@
         <div>
           <div class="letter-text">💌 一封写给你的信</div>
           <div class="letter-sub">轻轻拆开，里面是心意</div>
-        </div>
-      </div>
-
-      <!-- 两份礼物都送出，无需选择 -->
-      <div class="gift-row">
-        <div class="gift-item" data-gift="A">
-          <span class="picked-badge">已送达</span>
-          <span class="gift-box-emoji" aria-hidden="true">💝</span>
-          <span class="gift-name">礼物A</span>
-        </div>
-        <div class="gift-item" data-gift="B">
-          <span class="picked-badge">已送达</span>
-          <span class="gift-box-emoji" aria-hidden="true">🎁</span>
-          <span class="gift-name">礼物B</span>
         </div>
       </div>
 
