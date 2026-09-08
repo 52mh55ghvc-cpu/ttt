@@ -132,21 +132,23 @@
 
     .pic-ph {
       width: 100%;
-      aspect-ratio: 1 / 1;
+      aspect-ratio: 3 / 4;
       border-radius: 0.8rem;
       display: flex;
       align-items: center;
       justify-content: center;
       position: relative;
       overflow: hidden;
+      background: #f4d0d6;
     }
-    /* 若替换为真实图片，img 会铺满占位框 */
     .pic-ph img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      object-position: center 18%;
       display: block;
     }
+    .pic-4 img { object-position: center 40%; }
     .pic-caption {
       text-align: center;
       font-size: 0.88rem;
@@ -160,14 +162,6 @@
     .pic-2 { background: linear-gradient(145deg, #ffd29d, #ffb347); }
     .pic-3 { background: linear-gradient(145deg, #ffe6a7, #f5c518); }
     .pic-4 { background: linear-gradient(145deg, #ffc4b8, #ff8a75); }
-
-    .pic-watermark {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: rgba(255, 255, 255, 0.92);
-      text-shadow: 0 2px 8px rgba(120, 40, 50, 0.25);
-      letter-spacing: 0.04em;
-    }
 
     /* ========== 过渡页：答对了 ========== */
     .success-wrap {
@@ -352,23 +346,15 @@
     }
 
     .gift-item {
-      background: #fff;
-      border: 2px solid transparent;
+      background: linear-gradient(180deg, #fffdf2, #fff7d6);
+      border: 2px solid #f5b942;
       border-radius: 1.1rem;
       padding: 1rem 0.6rem 0.85rem;
-      box-shadow: 0 0.45rem 1.2rem rgba(196, 92, 110, 0.12);
+      box-shadow: 0 0.5rem 1.4rem rgba(245, 185, 66, 0.28);
       text-align: center;
       position: relative;
       width: 100%;
-      font: inherit;
-      color: inherit;
     }
-    .gift-item.selected {
-      border-color: #f5b942;
-      background: linear-gradient(180deg, #fffdf2, #fff7d6);
-      box-shadow: 0 0.5rem 1.4rem rgba(245, 185, 66, 0.35);
-    }
-    .gift-item:active { box-shadow: 0 0.2rem 0.6rem rgba(196, 92, 110, 0.16); }
 
     .gift-box-emoji {
       font-size: 2.6rem;
@@ -380,12 +366,6 @@
     @keyframes boxFloat {
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-0.25rem); }
-    }
-    .gift-item.selected .gift-box-emoji { animation: boxBounce 0.45s ease; }
-    @keyframes boxBounce {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.18); }
-      100% { transform: scale(1); }
     }
 
     .gift-name {
@@ -405,9 +385,7 @@
       font-weight: 700;
       padding: 0.12rem 0.4rem;
       border-radius: 999px;
-      display: none;
     }
-    .gift-item.selected .picked-badge { display: inline-block; }
 
     .blessing-card {
       background: #fffdf8;
@@ -450,33 +428,27 @@
       </header>
 
       <div class="pic-grid">
-        <!--
-          【替换真实图片说明】
-          把 .pic-ph 内部的 <span class="pic-watermark"> 删掉，
-          改成：<img src="你的图片地址.jpg" alt="图片1">
-          四张图分别对应 pic-1 ~ pic-4。
-        -->
         <button type="button" class="pic-card pressable" data-choice="1" aria-label="选择图片1">
           <div class="pic-ph pic-1">
-            <span class="pic-watermark">图片1</span>
+            <img src="images/pic1.jpg" alt="图片1">
           </div>
           <span class="pic-caption">图片1</span>
         </button>
         <button type="button" class="pic-card pressable" data-choice="2" aria-label="选择图片2">
           <div class="pic-ph pic-2">
-            <span class="pic-watermark">图片2</span>
+            <img src="images/pic2.jpg" alt="图片2">
           </div>
           <span class="pic-caption">图片2</span>
         </button>
         <button type="button" class="pic-card pressable" data-choice="3" aria-label="选择图片3">
           <div class="pic-ph pic-3">
-            <span class="pic-watermark">图片3</span>
+            <img src="images/pic3.jpg" alt="图片3">
           </div>
           <span class="pic-caption">图片3</span>
         </button>
         <button type="button" class="pic-card pressable" data-choice="4" aria-label="选择图片4">
           <div class="pic-ph pic-4">
-            <span class="pic-watermark">图片4</span>
+            <img src="images/pic4.jpg" alt="图片4">
           </div>
           <span class="pic-caption">图片4</span>
         </button>
@@ -499,7 +471,7 @@
     <section id="page-gift" class="page" aria-label="礼物展示">
       <header class="gift-header">
         <h2>专属于你的惊喜</h2>
-        <p>点选一个礼物盒收下它</p>
+        <p>两份礼物都送给你啦</p>
       </header>
 
       <!-- 信：信封用 CSS 绘制，不依赖外部图片 -->
@@ -515,24 +487,24 @@
         </div>
       </div>
 
-      <!-- 两个任选礼物：点击选中，再点取消；点另一个会切换选中 -->
+      <!-- 两份礼物都送出，无需选择 -->
       <div class="gift-row">
-        <button type="button" class="gift-item pressable" data-gift="A" aria-label="选择礼物A">
-          <span class="picked-badge">已选</span>
+        <div class="gift-item" data-gift="A">
+          <span class="picked-badge">已送达</span>
           <span class="gift-box-emoji" aria-hidden="true">🎁</span>
           <span class="gift-name">礼物A</span>
-        </button>
-        <button type="button" class="gift-item pressable" data-gift="B" aria-label="选择礼物B">
-          <span class="picked-badge">已选</span>
+        </div>
+        <div class="gift-item" data-gift="B">
+          <span class="picked-badge">已送达</span>
           <span class="gift-box-emoji" aria-hidden="true">🎁</span>
           <span class="gift-name">礼物B</span>
-        </button>
+        </div>
       </div>
 
-      <!-- 祝福语：改下面 CONFIG.blessing 或这里的文字均可 -->
+      <!-- 祝福语：改下面 CONFIG.blessing 即可 -->
       <div class="blessing-card">
         <div class="blessing-label">✦ 祝福语 ✦</div>
-        <p class="blessing-text" id="blessingText">【祝福语待填】</p>
+        <p class="blessing-text" id="blessingText">亲爱的我给你写了一封信，真正生日那天记得查收哦</p>
       </div>
     </section>
   </div>
@@ -542,7 +514,7 @@
      * 可修改配置（文案 / 祝福语 / 动画时间）
      * ========================================================= */
     var CONFIG = {
-      blessing: '【祝福语待填】', // ← 在这里填写祝福语
+      blessing: '亲爱的我给你写了一封信，真正生日那天记得查收哦',
       giftButtonDelay: 1500      // 过渡页按钮延迟出现（毫秒）
     };
 
@@ -557,7 +529,6 @@
     var btnViewGift = document.getElementById('btnViewGift');
     var confettiLayer = document.getElementById('confettiLayer');
     var blessingText = document.getElementById('blessingText');
-    var selectedGift = null;
     var giftBtnTimer = null;
 
     blessingText.textContent = CONFIG.blessing;
@@ -591,21 +562,6 @@
 
     btnViewGift.addEventListener('click', function () {
       showPage('gift');
-    });
-
-    /* 礼物：单选；再次点击已选项可取消 */
-    document.querySelectorAll('.gift-item').forEach(function (item) {
-      item.addEventListener('click', function () {
-        var name = item.getAttribute('data-gift');
-        if (selectedGift === name) {
-          selectedGift = null;
-        } else {
-          selectedGift = name;
-        }
-        document.querySelectorAll('.gift-item').forEach(function (el) {
-          el.classList.toggle('selected', el.getAttribute('data-gift') === selectedGift);
-        });
-      });
     });
 
     /* 彩带 / 星星庆祝动画（纯 DOM + CSS，不依赖外部资源） */
