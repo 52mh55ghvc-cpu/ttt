@@ -343,25 +343,32 @@
     .blessing-card {
       background: #fffdf8;
       border-radius: 1.1rem;
-      padding: 1.15rem 1rem;
+      padding: 1.2rem 1.1rem 1.3rem;
       box-shadow: 0 0.45rem 1.2rem rgba(196, 92, 110, 0.12);
       text-align: center;
       border: 1px dashed rgba(232, 93, 117, 0.28);
+      width: 100%;
+      max-width: 100%;
+      overflow: hidden;
     }
     .blessing-label {
       font-size: 0.75rem;
       color: #c0787a;
       letter-spacing: 0.12em;
-      margin-bottom: 0.45rem;
+      margin-bottom: 0.7rem;
     }
     .blessing-text {
-      font-size: 0.98rem;
-      line-height: 1.75;
+      font-size: 0.92rem;
+      line-height: 1.9;
       color: #8a3b4a;
       font-weight: 600;
       white-space: pre-wrap;
-      word-break: keep-all;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      width: 100%;
+      max-width: 100%;
       text-align: left;
+      margin: 0;
     }
   </style>
 </head>
@@ -445,9 +452,14 @@
       <!-- 祝福语：改下面 CONFIG.blessing 即可 -->
       <div class="blessing-card">
         <div class="blessing-label">✦ 祝福语 ✦</div>
-        <p class="blessing-text" id="blessingText">亲爱的我给你写了一封信，真正生日那天记得查收哦
+        <p class="blessing-text" id="blessingText">亲爱的我给你写了一封信，
+真正生日那天记得查收哦
 
-礼物我还在选，有什么想要的记得告诉我，到英国之后再给你几个选项，之后送给你
+礼物我还在选，
+有什么想要的记得告诉我，
+到英国之后再给你几个选项，
+之后送给你
+
 我爱你卢意</p>
       </div>
     </section>
@@ -458,7 +470,7 @@
      * 可修改配置（文案 / 祝福语 / 动画时间）
      * ========================================================= */
     var CONFIG = {
-      blessing: '亲爱的我给你写了一封信，真正生日那天记得查收哦\n\n礼物我还在选，有什么想要的记得告诉我，到英国之后再给你几个选项，之后送给你\n我爱你卢意',
+      blessing: '亲爱的我给你写了一封信，\n真正生日那天记得查收哦\n\n礼物我还在选，\n有什么想要的记得告诉我，\n到英国之后再给你几个选项，\n之后送给你\n\n我爱你卢意',
       giftButtonDelay: 1500      // 过渡页按钮延迟出现（毫秒）
     };
 
